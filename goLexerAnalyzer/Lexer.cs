@@ -1,4 +1,4 @@
-﻿// Commnet following to turn off debug mode
+﻿// Comment following to turn off debug options
 //#define DEBUG_STATE_SHIFTING
 #define DEBUG_PARSED_LEXEM
 
@@ -23,6 +23,8 @@ namespace goLexerAnalyzer
                 switch (state)
                 {
                     case State.Default:
+                        // TODO: process \n\r as TokenType.EndOfStatement or whatever
+                        // TODO: count lines and (optionally) symbols to indicate where error occured
                         while (IsSpaceOrTab(currChar) || currChar == '\n' || currChar == '\r') MoveCursor(); // Skip tabs and spaces
 
                         if (IsLetterOr_(currChar)) ShiftState(State.Identifier);
@@ -32,7 +34,7 @@ namespace goLexerAnalyzer
                         else if (IsZeroChar(currChar)) ShiftState(State.Final);
                         else
                         {
-                            err = Error.UnknownChar;
+                            err = Error.UnexpectedChar;
                             ShiftState(State.Error);
                         }
                         break;
@@ -62,12 +64,19 @@ namespace goLexerAnalyzer
                     case State.Error:
                         switch (err)
                         {
-                            case Error.UnknownChar:
+                            case Error.UnexpectedChar:
                                 Console.WriteLine("ERROR: " + err.ToString() + ", char code = " + (uint)currChar);
                                 break;
                             case Error.MissingClosingQuote:
                                 Console.WriteLine("ERROR: " + err.ToString() + " in string literal");
                                 break;
+                            case Error.UndefinedTokenType:
+                                Console.WriteLine("ERROR: " + err.ToString());
+                                break;
+                            case Error.WrongOperatorSyntax:
+                                Console.WriteLine("ERROR: " + err.ToString());
+                                break;
+
                             /*
                             default:
                                 Console.WriteLine("ERROR: Unknown error");
@@ -86,10 +95,11 @@ namespace goLexerAnalyzer
             TokenType tt = TokenType.Undefined;
             switch (currChar)
             {
-                case '(': tt = TokenType.OpRoundBracket; break;
-                case ')': tt = TokenType.ClRoundBracket; break;
-                case '{': tt = TokenType.OpCurlyBracket; break;
-                case '}': tt = TokenType.ClCurlyBracket; break;
+                // TODO: add ==
+                case '(': tt = TokenType.OpenningRoundBracket; break;
+                case ')': tt = TokenType.ClosingRoundBracket; break;
+                case '{': tt = TokenType.OpenningCurlyBracket; break;
+                case '}': tt = TokenType.ClosingCurlyBracket; break;
                 case ',': tt = TokenType.Comma; break;
                 case ';': tt = TokenType.Semicolon; break;
                 case '+': tt = TokenType.Arithmetic; break;
@@ -97,7 +107,20 @@ namespace goLexerAnalyzer
                 case '*': tt = TokenType.Multiply; break;
                 case '/': tt = TokenType.Multiply; break;
                 case '%': tt = TokenType.Multiply; break;
-                case '=': tt = TokenType.Assignment; break;
+
+
+                case '=':
+                    if(nextChar == '=')
+                    {
+                        tt = TokenType.Comparison;
+                        buffer.Append(nextChar);
+                        MoveCursor();
+                    }
+                    else
+                    {
+                        tt = TokenType.Assignment;
+                    }
+                    break;
 
                 case ':':
                     if (nextChar == '=')
@@ -107,44 +130,63 @@ namespace goLexerAnalyzer
                         MoveCursor();
                     }
                     else
+                    {
                         tt = TokenType.Colon;
+                    }
                     break;
 
                 case '>':
+                    tt = TokenType.Comparison;
                     if (nextChar == '=')
                     {
                         buffer.Append(nextChar);
                         MoveCursor();
                     }
-                    tt = TokenType.Compare;
                     break;
 
                 case '<':
+                    tt = TokenType.Comparison;
                     if (nextChar == '=')
                     {
                         buffer.Append(nextChar);
                         MoveCursor();
                     }
-                    tt = TokenType.Compare;
                     break;
 
                 case '!':
+                    tt = TokenType.Comparison;
                     if (nextChar == '=')
                     {
-                        tt = TokenType.Colon;
                         buffer.Append(nextChar);
                         MoveCursor();
                     }
+                    else
+                    {
+                        err = Error.WrongOperatorSyntax; //TODO: maybe to do the same for every opearator?
+                    }
                     break;
             }
-            string lexem = buffer.ToString();
-            tokens.Add(new Token(lexem, tt));
-            #if DEBUG_PARSED_LEXEM
-                Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
-            #endif
-            MoveCursor();
-            buffer.Clear();
-            ShiftState(State.Default);
+
+            if (tt == TokenType.Undefined)
+            {
+                err = Error.UndefinedTokenType;
+                ShiftState(State.Error);
+            }
+            else if (err != Error.None)
+            {
+                ShiftState(State.Error);
+            }
+            else
+            {
+                string lexem = buffer.ToString();
+                tokens.Add(new Token(lexem, tt));
+                #if DEBUG_PARSED_LEXEM
+                    Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
+                #endif
+                MoveCursor();
+                buffer.Clear();
+                ShiftState(State.Default);
+            }
         }
 
         private void ParseString()
@@ -184,6 +226,8 @@ namespace goLexerAnalyzer
 
         private void ParseNumber()
         {
+            // Integer numbers only (for now)
+            // TODO: float numbers
             while (IsDigit(currChar))
             {
                 buffer.Append(currChar);
@@ -202,6 +246,7 @@ namespace goLexerAnalyzer
 
         private void ParseIdentifier()
         {
+            // TODO: parsing fmt.Print and fmt.Scan
             while (!IsZeroChar(currChar) && (IsDigit(currChar) || IsLetterOr_(currChar)))
             {
                 buffer.Append(currChar);
@@ -209,7 +254,7 @@ namespace goLexerAnalyzer
             }
 
             string lexem = buffer.ToString();
-            TokenType tt = GetTokenType(lexem);
+            TokenType tt = ProbeKeyword(lexem);
             tokens.Add(new Token(lexem, tt));
             #if DEBUG_PARSED_LEXEM
                 Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
@@ -225,8 +270,10 @@ namespace goLexerAnalyzer
         private enum Error
         {
             None,
-            UnknownChar,
-            MissingClosingQuote
+            UnexpectedChar,
+            MissingClosingQuote,
+            UndefinedTokenType,
+            WrongOperatorSyntax
         }
 
         private enum State
@@ -274,12 +321,12 @@ namespace goLexerAnalyzer
         private void MoveCursor()
         {
             if (input.Peek() != -1)
-                currChar = (char)input.Peek();
+                currChar = (char)input.Read();
             else
                 currChar = '\0';
 
             if (input.Peek() != -1)
-                nextChar = (char)input.Read();
+                nextChar = (char)input.Peek();
             else
                 nextChar = '\0';
         }
@@ -296,7 +343,7 @@ namespace goLexerAnalyzer
 
         private bool IsSymbol(char ch)
         {
-            char[] symbols = { '(', ')', '{', '}', ';', ':', ',', '+', '-', '/', '%', '*', '<', '>', '!', '=', '\r', '\n' };
+            char[] symbols = { '(', ')', '{', '}', ';', ':', ',', '+', '-', '/', '%', '*', '<', '>', '!', '=', };
             foreach (char s in symbols)
             {
                 if (ch == s) return true;
@@ -319,36 +366,36 @@ namespace goLexerAnalyzer
             return ch == '\0';
         }
 
-        private static TokenType GetTokenType(string str)
+        private static TokenType ProbeKeyword(string str)
         {
             if (str == "for")
-                return TokenType.For;
+                return TokenType.ForKeyword;
             if (str == "switch")
-                return TokenType.Switch;
+                return TokenType.SwitchKeyword;
             if (str == "case")
-                return TokenType.Case;
+                return TokenType.CaseKeyword;
             if (str == "default")
-                return TokenType.Default;
+                return TokenType.DefaultKeyword;
             if (str == "if")
-                return TokenType.If;
+                return TokenType.IfKeyword;
             if (str == "else")
-                return TokenType.Else;
+                return TokenType.ElseKeyword;
             if (str == "func")
-                return TokenType.Func;
+                return TokenType.FuncKeyword;
             if (str == "return")
-                return TokenType.Return;
+                return TokenType.ReturnKeyword;
             if (str == "var")
-                return TokenType.Var;
+                return TokenType.VarKeyword;
             if (str == "const")
-                return TokenType.Const;
+                return TokenType.ConstKeyword;
             if (str == "int")
-                return TokenType.Int;
+                return TokenType.IntKeyword;
             if (str == "float")
-                return TokenType.Float;
+                return TokenType.FloatKeyword;
             if (str == "bool")
-                return TokenType.Bool;
+                return TokenType.BoolKeyword;
             if (str == "string")
-                return TokenType.String;
+                return TokenType.StringKeyword;
             return TokenType.Identifier;
         }
 
