@@ -1,5 +1,6 @@
 ﻿// Commnet following to turn off debug mode
-#define LEXICAL_ANALIZER_DEBUG
+//#define DEBUG_STATE_SHIFTING
+#define DEBUG_PARSED_LEXEM
 
 using System;
 using System.Text;
@@ -22,7 +23,7 @@ namespace goLexerAnalyzer
                 switch (state)
                 {
                     case State.Default:
-                        while (IsSpaceOrTab(currChar)) MoveCursor(); // Skip tabs and spaces
+                        while (IsSpaceOrTab(currChar) || currChar == '\n' || currChar == '\r') MoveCursor(); // Skip tabs and spaces
 
                         if (IsLetterOr_(currChar)) ShiftState(State.Identifier);
                         else if (IsDigit(currChar)) ShiftState(State.Number);
@@ -54,7 +55,7 @@ namespace goLexerAnalyzer
 
                     case State.Final:
                         Console.WriteLine("Lexical parsing success!");
-                        // Close File
+                        // TODO: Close File
                         return tokens;
                         break;
 
@@ -64,11 +65,15 @@ namespace goLexerAnalyzer
                             case Error.UnknownChar:
                                 Console.WriteLine("ERROR: " + err.ToString() + ", char code = " + (uint)currChar);
                                 break;
-                        /*
+                            case Error.MissingClosingQuote:
+                                Console.WriteLine("ERROR: " + err.ToString() + " in string literal");
+                                break;
+                            /*
                             default:
-                                Console.WriteLine("ERROR: Unknown error");*/
+                                Console.WriteLine("ERROR: Unknown error");
+                            */
                         }
-                        // Close File
+                        // TODO: Close File
                         return null;
                         break;
                 }
@@ -134,9 +139,9 @@ namespace goLexerAnalyzer
             }
             string lexem = buffer.ToString();
             tokens.Add(new Token(lexem, tt));
-#if LEXICAL_ANALIZER_DEBUG
-            Console.WriteLine("DEBUG: Lexem parsed: <" + lexem + ", " + tt + ">");
-#endif
+            #if DEBUG_PARSED_LEXEM
+                Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
+            #endif
             MoveCursor();
             buffer.Clear();
             ShiftState(State.Default);
@@ -144,33 +149,37 @@ namespace goLexerAnalyzer
 
         private void ParseString()
         {
-            TokenType tt;
             do
             {
                 buffer.Append(currChar);
+                if (currChar == '\\')
+                {
+                    // TODO: Check if escape sequence is correct
+                    MoveCursor();
+                    buffer.Append(currChar);
+                }
                 MoveCursor();
-            } while (!IsZeroChar(currChar) && !IsNonEscapedQuote(currChar, nextChar));
+            } while (!IsZeroChar(currChar) && !IsQuote(currChar));
 
             if (IsQuote(currChar))
             {
-                buffer.Append(currChar);
-                string lexem = buffer.ToString();
-                tt = TokenType.StringLiteral;
-                tokens.Add(new Token(lexem, tt));
-#if LEXICAL_ANALIZER_DEBUG
-                Console.WriteLine("DEBUG: Lexem parsed: <" + lexem + ", " + tt + ">");
-#endif
+                buffer.Append(currChar); // Append last '"'
                 MoveCursor();
-                ShiftState(State.Default);
-            } else
-            {
-                string lexem = buffer.ToString();
-                Console.WriteLine("DEBUG: Error in string: <" + lexem + ">");
-                ShiftState(State.Error);
-                err = Error.MissingQuote;
-            }
 
-            buffer.Clear();
+                string lexem = buffer.ToString();
+                TokenType tt = TokenType.StringLiteral;
+                tokens.Add(new Token(lexem, tt));
+                #if DEBUG_PARSED_LEXEM
+                    Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
+                #endif
+                buffer.Clear();
+                ShiftState(State.Default);
+            } 
+            else
+            {
+                err = Error.MissingClosingQuote;
+                ShiftState(State.Error);
+            }
         }
 
         private void ParseNumber()
@@ -181,22 +190,14 @@ namespace goLexerAnalyzer
                 MoveCursor();
             } 
             
-            if (IsSpaceOrTab(currChar))
-            {
-                string lexem = buffer.ToString();
-                TokenType tt = TokenType.IntLiteral;
-                tokens.Add(new Token(lexem, tt));
-#if LEXICAL_ANALIZER_DEBUG
-                Console.WriteLine("DEBUG: Lexem parsed: <" + lexem + ", " + tt + ">");
-#endif
-
+            string lexem = buffer.ToString();
+            TokenType tt = TokenType.IntLiteral;
+            tokens.Add(new Token(lexem, tt));
+            #if DEBUG_PARSED_LEXEM
+                Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
+            #endif
+            buffer.Clear();
             ShiftState(State.Default);
-            } 
-            else 
-            {
-
-            }
-
         }
 
         private void ParseIdentifier()
@@ -210,9 +211,9 @@ namespace goLexerAnalyzer
             string lexem = buffer.ToString();
             TokenType tt = GetTokenType(lexem);
             tokens.Add(new Token(lexem, tt));
-#if LEXICAL_ANALIZER_DEBUG
-            Console.WriteLine("DEBUG: Lexem parsed: <" + lexem + ", " + tt + ">");
-#endif
+            #if DEBUG_PARSED_LEXEM
+                Console.WriteLine("Debug: Lexem parsed: <" + lexem + ", " + tt + ">");
+            #endif
 
             buffer.Clear();
             ShiftState(State.Default);
@@ -225,7 +226,7 @@ namespace goLexerAnalyzer
         {
             None,
             UnknownChar,
-            MissingQuote
+            MissingClosingQuote
         }
 
         private enum State
@@ -264,9 +265,9 @@ namespace goLexerAnalyzer
 
         private void ShiftState(State st)
         {
-#if LEXICAL_ANALIZER_DEBUG
-            Console.WriteLine("DEBUG: Shifting state: " + state.ToString() + " -> " + st.ToString());
-#endif
+            #if DEBUG_STATE_SHIFTING
+                Console.WriteLine("Debug: Shifting state: " + state.ToString() + " -> " + st.ToString());
+            #endif
             state = st;
         }
 
@@ -306,11 +307,6 @@ namespace goLexerAnalyzer
         private bool IsQuote(char ch)
         {
             return ch == '"';
-        }
-
-        private bool IsNonEscapedQuote(char cch, char nch)
-        {
-            return (cch != '\\') && (nch == '"');
         }
 
         private bool IsSpaceOrTab(char ch)
