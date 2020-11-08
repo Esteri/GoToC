@@ -4,61 +4,20 @@ using System.Text;
 
 namespace goLexerAnalyzer
 {
-    public enum TokenType
+    public class Token
     {
-        Bool,
-        Int,
-        Float,
-        String,
-        BoolLiteral,
-        IntLiteral,
-        FloatLiteral,
-        StringLiteral,
+        private TokenType type;
+        private string lexem;
 
-        Identifier,
-
-        AssignmentInFor,
-        Assignment,
-
-        Semicolon,
-        Colon,
-        Comma,
-        OpRoundBracket,
-        ClRoundBracket,
-        OpCurlyBracket,
-        ClCurlyBracket,
-
-        Compare,
-        Arithmetic,
-        Multiply,
-
-        For,
-        Return,
-        Switch,
-        Case,
-        Default,
-        If,
-        Else,
-        Func,
-        Var,
-        Const,
-        Undefined,
-    }
-    struct Token
-    {
-        string lexem;
-        TokenType type;
-
-        public Token(string lexem, TokenType type) : this()
+        public Token(TokenType tt, string lex)
         {
-            this.lexem = lexem;
-            this.type = type;
+            lexem = lex;
+            this.type = tt;
         }
 
         public override string ToString()
         {
-            return lexem.PadRight(15) + "\t\t" + type;
+            return "<" + type.ToString() + ", \"" + lexem + "\">"; 
         }
-
     }
 }
