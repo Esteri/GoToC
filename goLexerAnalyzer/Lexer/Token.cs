@@ -19,5 +19,19 @@ namespace goLexerAnalyzer
         {
             return "<" + type.ToString() + ", \"" + lexem + "\">"; 
         }
+
+        public TokenType Type
+        {
+            get {
+                return type;
+            }
+        }
+
+        public string Lexem
+        {
+            get {
+                return lexem;
+            }
+        }
     }
 }

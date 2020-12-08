@@ -23,13 +23,30 @@ namespace goLexerAnalyzer
             //Lexer lex = new Lexer(args[0]);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             List<Token> tokens = lex.Parse(args[0]);
-
+            
             foreach ( Token tkn in tokens)
             {
                 Console.WriteLine(tkn.ToString());
             }
 
-            lex = null;
+            Grammar g = new Grammar();
+            //g.Print();
+            /*Console.Out.WriteLine("Rules for <Declarations>");
+            List<Production> rules = g.GetRulesForNt(Nonterminal.Of(TokenType.Declarations));
+            foreach (Production rule in rules) {
+                Console.Out.WriteLine(rule.ToString());
+            }
+            Console.Out.WriteLine();
+
+            Console.Out.WriteLine("Rules for <Operand6lvl>");
+            rules = g.GetRulesForNt(Nonterminal.Of(TokenType.Operand6lvl));
+            foreach(Production rule in rules) {
+                Console.Out.WriteLine(rule.ToString());
+            }*/
+
+            EarleyParser synt = new EarleyParser(g);
+            synt.Parse(tokens);
+            //lex = null;
         }
     }
 }
