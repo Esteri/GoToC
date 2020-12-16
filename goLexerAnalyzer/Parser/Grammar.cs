@@ -69,12 +69,12 @@ namespace goLexerAnalyzer
                 Nonterminal.Of(TokenType.Axiom),
                 new Sentence
                 {
-                    //Terminal.Of(TokenType.Import),
-                    //Terminal.Of(TokenType.Fmt),
-                    //Terminal.Of(TokenType.EndOfStatement),
+                    Terminal.Of(TokenType.Import),
+                    Terminal.Of(TokenType.Fmt),
+                    Terminal.Of(TokenType.EndOfStatement),
                     Nonterminal.Of(TokenType.Declarations),
                     //Terminal.Eof
-                }),
+                }, 0),
 
             // --------------- ¬€–¿∆≈Õ»ﬂ ---------------
 
@@ -83,7 +83,7 @@ namespace goLexerAnalyzer
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand1lvl)
-                }),
+                }, 1),
 
             new Production(
                 Nonterminal.Of(TokenType.Arguments),
@@ -92,7 +92,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand1lvl),
                     Terminal.Of(TokenType.Comma),
                     Nonterminal.Of(TokenType.Arguments)
-                }),
+                }, 2),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand1lvl),
@@ -101,13 +101,13 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand2lvl),
                     Terminal.Of(TokenType.LogicalOr),
                     Nonterminal.Of(TokenType.Operand1lvl)
-                }),
+                }, 3),
             new Production(
                 Nonterminal.Of(TokenType.Operand1lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand2lvl)
-                }),
+                }, 4),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand2lvl),
@@ -116,14 +116,14 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand3lvl),
                     Terminal.Of(TokenType.LogicalAnd),
                     Nonterminal.Of(TokenType.Operand2lvl)
-                }),
+                }, 5),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand2lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand3lvl)
-                }),
+                }, 6),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand3lvl),
@@ -132,14 +132,14 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand4lvl),
                     Terminal.Of(TokenType.Comparison),
                     Nonterminal.Of(TokenType.Operand4lvl)
-                }),
+                }, 7),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand3lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Literal)
-                }),
+                }, 8),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand3lvl),
@@ -148,7 +148,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningRoundBracket),
                     Nonterminal.Of(TokenType.Operand1lvl),
                     Terminal.Of(TokenType.ClosingRoundBracket)
-                }),
+                }, 9),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand3lvl),
@@ -158,14 +158,14 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningRoundBracket),
                     Nonterminal.Of(TokenType.Operand1lvl),
                     Terminal.Of(TokenType.ClosingRoundBracket)
-                }),
+                }, 10),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand3lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand4lvl)
-                }),
+                }, 11),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand4lvl),
@@ -174,14 +174,14 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand5lvl),
                     Terminal.Of(TokenType.Addition),
                     Nonterminal.Of(TokenType.Operand4lvl)
-                }),
+                }, 12),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand4lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand5lvl)
-                }),
+                }, 13),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand5lvl),
@@ -190,21 +190,21 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand6lvl),
                     Terminal.Of(TokenType.Multiplication),
                     Nonterminal.Of(TokenType.Operand5lvl)
-                }),
+                }, 14),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand5lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand6lvl)
-                }),
+                }, 15),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand6lvl),
                 new Sentence
                 {
                     Terminal.Of(TokenType.Identifier)
-                }),
+                }, 16),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand6lvl),
@@ -213,7 +213,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Identifier),
                     Terminal.Of(TokenType.OpenningRoundBracket),
                     Terminal.Of(TokenType.ClosingRoundBracket)
-                }),
+                }, 17),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand6lvl),
@@ -223,14 +223,14 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningRoundBracket),
                     Nonterminal.Of(TokenType.Arguments),
                     Terminal.Of(TokenType.ClosingRoundBracket)
-                }),
+                }, 18),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand6lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Literal)
-                }),
+                }, 19),
 
             new Production(
                 Nonterminal.Of(TokenType.Operand6lvl),
@@ -239,7 +239,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningRoundBracket),
                     Nonterminal.Of(TokenType.Operand4lvl),
                     Terminal.Of(TokenType.ClosingRoundBracket)
-                }),
+                }, 20),
 
             // --------------- ¬€— ¿«€¬¿Õ»ﬂ ---------------
 
@@ -248,32 +248,32 @@ namespace goLexerAnalyzer
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.VarDeclaration)
-                }),
+                }, 21),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.StatementIf)
-                }),
+                }, 22),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.StatementSwitch)
-                }),
+                }, 23),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.StatementFor)
-                }),
+                }, 24),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
                 {
                     Terminal.Of(TokenType.IdentifierReturn),
                     Terminal.Of(TokenType.EndOfStatement),
-                }),
+                }, 25),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
@@ -281,7 +281,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.IdentifierReturn),
                     Nonterminal.Of(TokenType.Operand1lvl),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 26),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
@@ -290,7 +290,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Assignment),
                     Nonterminal.Of(TokenType.Operand1lvl),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 27),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
@@ -299,7 +299,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningRoundBracket),
                     Terminal.Of(TokenType.ClosingRoundBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 28),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
@@ -309,20 +309,20 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Arguments),
                     Terminal.Of(TokenType.ClosingRoundBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 29),
             new Production(
                 Nonterminal.Of(TokenType.Statements),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Statement)
-                }),
+                }, 30),
             new Production(
                 Nonterminal.Of(TokenType.Statement),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Statement),
                     Nonterminal.Of(TokenType.Statements),
-                }),
+                }, 31),
 
             // --------------- Œ¡⁄ﬂ¬À≈Õ»ﬂ ---------------
 
@@ -332,20 +332,20 @@ namespace goLexerAnalyzer
                 {
                     Nonterminal.Of(TokenType.VarDeclaration),
                     Nonterminal.Of(TokenType.Declarations)
-                }),
+                }, 32),
             new Production(
                 Nonterminal.Of(TokenType.Declarations),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.FuncDeclaration),
                     Nonterminal.Of(TokenType.Declarations)
-                }),
+                }, 33),
             new Production(
                 Nonterminal.Of(TokenType.Declarations),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.FuncDeclaration)
-                }),
+                }, 34),
             new Production(
                 Nonterminal.Of(TokenType.VarDeclaration),
                 new Sentence
@@ -356,7 +356,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Assignment),
                     Nonterminal.Of(TokenType.Literal),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 35),
             new Production(
                 Nonterminal.Of(TokenType.VarDeclaration),
                 new Sentence
@@ -367,7 +367,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Assignment),
                     Nonterminal.Of(TokenType.Operand1lvl),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 36),
 
             new Production(
                 Nonterminal.Of(TokenType.FuncDeclaration),
@@ -384,7 +384,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 37),
             new Production(
                 Nonterminal.Of(TokenType.FuncDeclaration),
                 new Sentence
@@ -399,7 +399,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 38),
             new Production(
                 Nonterminal.Of(TokenType.FuncDeclaration),
                 new Sentence
@@ -414,7 +414,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 39),
 
             new Production(
                 Nonterminal.Of(TokenType.FuncDeclaration),
@@ -429,7 +429,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 40),
             new Production(
                 Nonterminal.Of(TokenType.Parameters),
                 new Sentence
@@ -437,7 +437,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Identifier),
                     Terminal.Of(TokenType.IdentifierType)
 
-                }),
+                }, 41),
             new Production(
                 Nonterminal.Of(TokenType.Parameters),
                 new Sentence
@@ -446,7 +446,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.IdentifierType),
                     Terminal.Of(TokenType.Comma),
                     Nonterminal.Of(TokenType.Parameters)
-                }),
+                }, 42),
 
             // ------------------ IF ------------------
 
@@ -461,7 +461,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 43),
             new Production(
                 Nonterminal.Of(TokenType.StatementIf),
                 new Sentence
@@ -471,7 +471,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningCurlyBracket),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 44),
 
             new Production(
                 Nonterminal.Of(TokenType.StatementIf),
@@ -484,7 +484,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Nonterminal.Of(TokenType.ElseBrunch)
-                }),
+                }, 45),
             new Production(
                 Nonterminal.Of(TokenType.StatementIf),
                 new Sentence
@@ -495,14 +495,14 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.EndOfStatement),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Nonterminal.Of(TokenType.ElseBrunch)
-                }),
+                }, 46),
             new Production(
                 Nonterminal.Of(TokenType.ElseBrunch),
                 new Sentence
                 {
                     Terminal.Of(TokenType.IdentifierElse),
                     Nonterminal.Of(TokenType.StatementIf)
-                }),
+                }, 47),
             new Production(
                 Nonterminal.Of(TokenType.ElseBrunch),
                 new Sentence
@@ -513,7 +513,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 48),
             new Production(
                 Nonterminal.Of(TokenType.ElseBrunch),
                 new Sentence
@@ -522,7 +522,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningCurlyBracket),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 49),
 
             // ----------------- FOR ------------------
 
@@ -537,7 +537,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 50),
             new Production(
                 Nonterminal.Of(TokenType.StatementFor),
                 new Sentence
@@ -557,7 +557,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Statements),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 51),
             new Production(
                 Nonterminal.Of(TokenType.StatementFor),
                 new Sentence
@@ -567,7 +567,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningCurlyBracket),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 52),
             new Production(
                 Nonterminal.Of(TokenType.StatementFor),
                 new Sentence
@@ -585,7 +585,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.OpenningCurlyBracket),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 53),
 
             // ---------------- SWITCH ----------------
 
@@ -600,7 +600,7 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.CaseClause),
                     Terminal.Of(TokenType.ClosingCurlyBracket),
                     Terminal.Of(TokenType.EndOfStatement)
-                }),
+                }, 54),
             new Production(
                 Nonterminal.Of(TokenType.CaseClause),
                 new Sentence
@@ -610,13 +610,13 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Colon),
                     Terminal.Of(TokenType.EndOfStatement),
                     Nonterminal.Of(TokenType.Statements)
-                }),
+                }, 55),
             new Production(
                 Nonterminal.Of(TokenType.CaseClause),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.CaseBrunches)
-                }),
+                }, 56),
             new Production(
                 Nonterminal.Of(TokenType.CaseBrunches),
                 new Sentence
@@ -626,7 +626,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.Colon),
                     Terminal.Of(TokenType.EndOfStatement),
                     Nonterminal.Of(TokenType.Statements)
-                }),
+                }, 57),
             new Production(
                 Nonterminal.Of(TokenType.CaseBrunches),
                 new Sentence
@@ -637,7 +637,7 @@ namespace goLexerAnalyzer
                     Terminal.Of(TokenType.EndOfStatement),
                     Nonterminal.Of(TokenType.Statements),
                     Nonterminal.Of(TokenType.CaseBrunches)
-                }),
+                }, 58),
 
             // --------------- À»“≈–¿À€ ---------------
 
@@ -646,25 +646,25 @@ namespace goLexerAnalyzer
                 new Sentence
                 {
                     Terminal.Of(TokenType.BoolLiteral)
-                }),
+                }, 59),
             new Production(
                 Nonterminal.Of(TokenType.Literal),
                 new Sentence
                 {
                     Terminal.Of(TokenType.FloatLiteral)
-                }),
+                }, 60),
             new Production(
                 Nonterminal.Of(TokenType.Literal),
                 new Sentence
                 {
                     Terminal.Of(TokenType.IntLiteral)
-                }),
+                }, 61),
             new Production(
                 Nonterminal.Of(TokenType.Literal),
                 new Sentence
                 {
                     Terminal.Of(TokenType.StringLiteral)
-                })
+                }, 62)
             };
             /*foreach (var letter in new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" })
             {
@@ -739,6 +739,16 @@ namespace goLexerAnalyzer
             }
             return table;
         }
+
+        int GetProductionNumber(Production pr)
+        {
+            for (int i = 0; i < productions.Count; i++) {
+                if (productions[i].Equals(pr))
+                    return i + 1;
+            }
+            return 0;
+        }
+
         public List<Production> GetRulesForNt(Nonterminal nt)
         {
             List<Production> rules;

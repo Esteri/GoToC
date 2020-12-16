@@ -23,10 +23,11 @@ namespace goLexerAnalyzer
             //Lexer lex = new Lexer(args[0]);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             List<Token> tokens = lex.Parse(args[0]);
-            
+
+            int i = 0;
             foreach ( Token tkn in tokens)
             {
-                Console.WriteLine(tkn.ToString());
+                Console.WriteLine(i++ + "\t" + tkn.ToString());
             }
 
             Grammar g = new Grammar();
@@ -46,7 +47,6 @@ namespace goLexerAnalyzer
 
             EarleyParser synt = new EarleyParser(g);
             synt.Parse(tokens);
-            //lex = null;
         }
     }
 }

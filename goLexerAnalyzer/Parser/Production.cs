@@ -7,12 +7,15 @@ namespace goLexerAnalyzer
 
         public Nonterminal LeftSide { get; }
         public Sentence RightSide { get; }
+
+        public int Number { get; }
         
 
-        public Production(Nonterminal left, Sentence right)
+        public Production(Nonterminal left, Sentence right, int number)
         {
             LeftSide = left;
             RightSide = right;
+            Number = number;
         }
 
         public bool Equals(Production other)

@@ -167,7 +167,8 @@ namespace goLexerAnalyzer
                             Console.WriteLine("dbg: Entering state " + state.ToString());
 #endif
                         // maybe this will change
-                        tokens.Add(new Token(TokenType.EndOfStatement, ""));
+                        if (tokens[tokens.Count - 1].Type != TokenType.EndOfStatement)
+                            tokens.Add(new Token(TokenType.EndOfStatement, ""));
 
 
                         Console.WriteLine("Lexical Parsing success!");

@@ -8,6 +8,7 @@ namespace goLexerAnalyzer
 		Nonterminal axiom;
 		Grammar g;
 		State[] S;
+		string reduct = "";
 
 		public EarleyParser(Grammar g)
 		{
@@ -27,49 +28,134 @@ namespace goLexerAnalyzer
 
         }
 
-		public List<object> Parse(List<Token> tokens)
+		public void Parse(List<Token> tokens)
         {
-			S = Init(tokens.Count);
+			bool matches = false;
+			int itemNumber = 0;
 
-			// в I0 добавили продукции аксиомы с точкой в позиции 0
-			List<Production> axiomProductions = g.GetRulesForNt(axiom);
-			foreach (Production prod in axiomProductions) {
-				S[0].Add(new Item(prod, 0, 0));
-            }
+			if ((tokens[0].Lexem == "import") && (tokens[1].Lexem == "fmt")) {
+				tokens[0] = new Token(TokenType.Import, "import");
+				tokens[1] = new Token(TokenType.Fmt, "fmt");
+
+				S = Init(tokens.Count);
+				// в I0 добавили продукции аксиомы с точкой в позиции 0
+				List<Production> axiomProductions = g.GetRulesForNt(axiom);
+				foreach(Production prod in axiomProductions) {
+					S[0].Add(new Item(prod, 0, 0));
+				}
 
 				// теперь надо пройти по итемам в I0 и записать правила для нетерминалов
-			int k = 0;
-			do {
-				for(int i = 0; i < S[k].Count; i++) {
-					Item item = S[k][i];
-					if(!item.IsComplete()) {
-						if (item.NextWord is Terminal) {
-							if (k != tokens.Count)
-								Scanner(item, tokens[k], k + 1);
-							//S[k + 1].Print();
-						} else if (item.NextWord is Nonterminal) {
-							// разрастание дерева когда точка на конечной позиции
-							//if (k == 0)
-							//	Predictor(S[0], S[0]);
-							Predictor(item, k, k);
-							//S[k].Print();
-						}
-					} else {
-						// сопоставление нетерминала
-						Completer(item, k);
+				int k = 0;
+				do {
+					for(int i = 0; i < S[k].Count; i++) {
+						Item item = S[k][i];
+						if(!item.IsComplete()) {
+							if(item.NextWord is Terminal) {
+								if(k != tokens.Count)
+									Scanner(item, tokens[k], k + 1);
+								//S[k + 1].Print();
+							} else if(item.NextWord is Nonterminal) {
+								// разрастание дерева когда точка на конечной позиции
+								//if (k == 0)
+								//	Predictor(S[0], S[0]);
+								Predictor(item, k, k);
+								//S[k].Print();
+							}
+						} else {
+							// сопоставление нетерминала
+							Completer(item, k);
 
-                    }
+						}
+					}
+					Console.Out.WriteLine("Chain " + k);
+					Console.Out.WriteLine("---------------------------------------------");
+					S[k].Print();
+					Console.Out.Write("\n\n\n\n");
+					k++;
+				} while(k <= tokens.Count);
+
+				k--;
+				for(int i = 0; i < S[k].Count; i++) {
+					if((S[k][i].Table == 0) && (S[k][i].Production.LeftSide == g.getAxiom())) {
+						matches = true;
+						itemNumber = i;
+						Console.Out.WriteLine("\nChain matches grammar. Processing reduction...\n");
+						break;
+					}
 				}
-				Console.Out.WriteLine("Chain " + k);
-				Console.Out.WriteLine("---------------------------------------------");
-				S[k].Print();
-				Console.Out.Write("\n\n\n\n");
-				k++;
-			} while(k <= tokens.Count);
-			return new List<object>();
+				
+			}
+			if(matches) {
+				Reduct(itemNumber);
+			} else {
+				Console.Out.WriteLine("\nResult: Chain doesn't match grammar.");
+			}
+
         }
 
-		private void Predictor(Item item, int stateNumber, int k)
+        private void Reduct(int itemNumber)
+        {
+			// точка входа рекурсивного алгоритма разбора
+			int j = S.Length - 1;
+			Finder(S[j][itemNumber], j);
+			Console.WriteLine(reduct);
+
+		}
+
+		private void Finder(Item item, int stateNumber)
+        {
+			int i = item.Table;
+			int j = stateNumber;
+			reduct = item.Production.Number.ToString() + " " + reduct; // добавление правила к разбору
+
+			Sentence currSentence = item.Production.RightSide;
+			int k = currSentence.Count;
+			int c = stateNumber;
+			Item flyingItem = item;
+			Symbol symbol;
+			do {
+				symbol = currSentence[k - 1];
+
+				if(symbol.IsTerminal) {
+					k--;
+					c--;
+				} else {
+					for(int b = 0; b < S[c].Count; b++) {
+						if((S[c][b].Production.LeftSide == symbol) && S[c][b].IsComplete()) {
+							Item foundedItem = S[c][b];
+							//l.Add(foundedItem);
+							if (ItemInCurrentPosInRevealedTable(foundedItem.Table, flyingItem.Decrement())) {
+								Finder(foundedItem, c);
+								//flag = true;
+								k--;
+								c = foundedItem.Table;
+								break;
+                            }
+						}
+					}
+					
+				}
+
+				flyingItem = flyingItem.Decrement();
+			} while(k != 0);
+		}
+
+        private bool ItemInCurrentPosInRevealedTable(int t, Item item)
+        {
+			for(int i = 0; i < S[t].Count; i++) {
+				if (S[t][i].Equals(item)) {
+					return true;
+				}
+            }
+			return false;
+        }
+
+        private Sentence getRightSide(Item item)
+        {
+			return item.Production.RightSide;
+		}
+
+        private void Predictor(Item item, int stateNumber, int k)
         {
 			Nonterminal nt = item.NextWord as Nonterminal;
 
@@ -134,6 +220,8 @@ namespace goLexerAnalyzer
             }
 		return type;
 		}
+
+
 
 		/*
 		 * private void Completer(State state, Item item)
