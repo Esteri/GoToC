@@ -17,7 +17,7 @@ namespace goLexerAnalyzer
 
         public static bool IsSymbol(char ch)
         {
-            char[] symbols = { '(', ')', '{', '}', ';', ':', ',', '+', '-', '/', '%', '*', '<', '>', '!', '=', };
+            char[] symbols = { '(', ')', '{', '}', ';', ':', ',', '+', '-', '/', '%', '*', '<', '>', '!', '=', '&', '|' };
             foreach (char s in symbols)
             {
                 if (ch == s) return true;

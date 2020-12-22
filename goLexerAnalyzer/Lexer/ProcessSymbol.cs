@@ -84,6 +84,32 @@ namespace goLexerAnalyzer
                         tt = TokenType.LogicalNegation;
                     }
                     break;
+                case '|':
+                    if (cursor.NextChar() == '|')
+                    {
+                        tt = TokenType.LogicalOr;
+                        buffer.Append(cursor.NextChar());
+                        cursor.Move();
+                    }
+                    else
+                    {
+                        err = LexicalError.UnexpectedChar;
+                        return null;
+                    }
+                    break;
+                case '&':
+                    if (cursor.NextChar() == '&')
+                    {
+                        tt = TokenType.LogicalAnd;
+                        buffer.Append(cursor.NextChar());
+                        cursor.Move();
+                    }
+                    else
+                    {
+                        err = LexicalError.UnexpectedChar;
+                        return null;
+                    }
+                    break;
             }
             cursor.Move(); // so all the Appended chars are skipped
 

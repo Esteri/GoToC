@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TOKEN_DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,6 +15,9 @@ namespace goLexerAnalyzer
         {
             lexem = lex;
             this.type = tt;
+#if TOKEN_DEBUG
+            Console.WriteLine("dbg: Token Created " + this.ToString());
+#endif
         }
 
         public override string ToString()
