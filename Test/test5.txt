@@ -56,7 +56,5 @@ func check_operand (x int, y int, z int) int {
 }
 
 func main() {
-    var a int
-    var a1 string
     check_operand(x, y, z)
 }
