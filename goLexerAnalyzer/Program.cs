@@ -60,6 +60,7 @@ namespace goLexerAnalyzer
                     if (!s.Equals(""))
                     {
                         rules.Add(Int32.Parse(s));
+                        Console.Out.WriteLine(s);
                     }
                 }
             }
@@ -69,10 +70,16 @@ namespace goLexerAnalyzer
                 return;
             }
 
-            //Generator gen = new Generator();
-            //string cppSrc = gen.GenCppSource(tokens, g, rules);
+            Transform t = new Transform();
+            List<int> normalized_rules = t.transform(rules);
 
-            //Console.Out.WriteLine(cppSrc);
+            
+            Generator gen = new Generator();
+            string cppSrc = gen.GenCppSource(tokens, normalized_rules);
+
+            Console.Out.WriteLine("\n //--------- CPP SRC FOLLOWS ---------------\n");
+            Console.Out.WriteLine(cppSrc);
+            
 
         }
     }
