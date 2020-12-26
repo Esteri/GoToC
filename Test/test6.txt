@@ -1,0 +1,9 @@
+import "fmt"
+
+func multiplication(x int, y int) {
+    return x*y 
+}
+
+func main(){
+    multiplication(x, y )
+}

@@ -1,0 +1,23 @@
+import "fmt"
+
+func multiplication(x int, y int) {
+    return x*y 
+}
+
+func main() {
+    var a1_main int = 32
+    var a2_main int = 6
+    var b1_main bool = false
+    var d_main string = "Hi"
+
+    a = add(a1_main, a2_main)
+    e = multiplication(a1_main, a2_main)
+    d_main = str() 
+    b2_main = checkflag(b1_main)
+    first()
+}
+
+func str() string{
+    var s string = "str"
+    return s
+}

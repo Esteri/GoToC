@@ -1,0 +1,58 @@
+import "fmt"
+
+const a int = 32
+const b bool = false
+const c float = 55.0
+const d string = ""
+
+var e1 int = 66
+
+var f1 bool = false
+
+var g1 float = 55.67
+
+var h1 string = "str"
+
+func add(x int, y int) int {
+    return x+y 
+}
+
+func multiplication(x int, y int) {
+    return x*y 
+}
+
+func str() string{
+    var s string = "str"
+    return s
+}
+
+func checkflag(flag bool) bool {
+    return flag
+}
+
+func OperCheck () {
+    var e1 float = 34.4e42
+    var e2 float = 23.3e+3
+    var e3 float = 12.7e-2
+    var e4 float = 33.3E+42
+    var e5 float = 21.34E-312
+    e3 = e1/e2
+    e3 = e1*e2
+    e3 = e1%e2
+    e3 = e1+e2
+    e3 = e1-e2
+    return e1
+}
+
+func main() {
+    var a1_main int = 32
+    var a2_main int = 6
+    var b1_main bool = false
+    var d_main string = "Hi"
+
+    a = add(a1_main, a2_main)
+    e = multiplication(a1_main, a2_main)
+    d_main = str() 
+    b2_main = checkflag(b1_main)
+    first()
+}

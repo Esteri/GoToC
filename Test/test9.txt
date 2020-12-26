@@ -1,0 +1,6 @@
+import "fmt"
+
+func main() {
+    var f1 bool = 67.8
+    var f2 bool = false
+}

@@ -1,0 +1,22 @@
+import "fmt"
+
+const a int = 32
+const b bool = false
+const c float = 55.0
+const d string = ""
+
+var e1 int = 66
+
+var f1 bool = false
+
+var g1 float = 55.67
+
+var h1 string = "str"
+
+func add(x int, y int) int {
+    return x+y 
+}
+
+func multiplication(x int, y int) {
+    return x*y 
+}
