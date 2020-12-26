@@ -23,15 +23,19 @@ namespace goLexerAnalyzer
             //Lexer lex = new Lexer(args[0]);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             List<Token> tokens = lex.Parse(args[0]);
-
+            if (tokens == null)
+            {
+                return;
+            }
             int i = 0;
             foreach ( Token tkn in tokens)
             {
                 Console.WriteLine(i++ + "\t" + tkn.ToString());
             }
 
+            
             Grammar g = new Grammar();
-            //g.Print();
+            g.Print();
             /*Console.Out.WriteLine("Rules for <Declarations>");
             List<Production> rules = g.GetRulesForNt(Nonterminal.Of(TokenType.Declarations));
             foreach (Production rule in rules) {
@@ -46,7 +50,30 @@ namespace goLexerAnalyzer
             }*/
 
             EarleyParser synt = new EarleyParser(g);
-            synt.Parse(tokens);
+            string sRules = synt.Parse(tokens);
+            List<int> rules = new List<int>();
+            if (sRules != null)
+            {
+                string[] subsRules = sRules.Split(' ');
+                foreach (string s in subsRules)
+                {
+                    if (!s.Equals(""))
+                    {
+                        rules.Add(Int32.Parse(s));
+                    }
+                }
+            }
+            else
+            {
+                Console.Out.WriteLine("rules == null");
+                return;
+            }
+
+            //Generator gen = new Generator();
+            //string cppSrc = gen.GenCppSource(tokens, g, rules);
+
+            //Console.Out.WriteLine(cppSrc);
+
         }
     }
 }
