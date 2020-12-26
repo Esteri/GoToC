@@ -28,7 +28,7 @@ namespace goLexerAnalyzer
 
         }
 
-		public void Parse(List<Token> tokens)
+		public string Parse(List<Token> tokens)
         {
 			bool matches = false;
 			int itemNumber = 0;
@@ -38,13 +38,13 @@ namespace goLexerAnalyzer
 				tokens[1] = new Token(TokenType.Fmt, "fmt");
 
 				S = Init(tokens.Count);
-				// Гў I0 Г¤Г®ГЎГ ГўГЁГ«ГЁ ГЇГ°Г®Г¤ГіГЄГ¶ГЁГЁ Г ГЄГ±ГЁГ®Г¬Г» Г± ГІГ®Г·ГЄГ®Г© Гў ГЇГ®Г§ГЁГ¶ГЁГЁ 0
+				// в I0 добавили продукции аксиомы с точкой в позиции 0
 				List<Production> axiomProductions = g.GetRulesForNt(axiom);
 				foreach(Production prod in axiomProductions) {
 					S[0].Add(new Item(prod, 0, 0));
 				}
 
-				// ГІГҐГЇГҐГ°Гј Г­Г Г¤Г® ГЇГ°Г®Г©ГІГЁ ГЇГ® ГЁГІГҐГ¬Г Г¬ Гў I0 ГЁ Г§Г ГЇГЁГ±Г ГІГј ГЇГ°Г ГўГЁГ«Г  Г¤Г«Гї Г­ГҐГІГҐГ°Г¬ГЁГ­Г Г«Г®Гў
+				// теперь надо пройти по итемам в I0 и записать правила для нетерминалов
 				int k = 0;
 				do {
 					for(int i = 0; i < S[k].Count; i++) {
@@ -55,14 +55,14 @@ namespace goLexerAnalyzer
 									Scanner(item, tokens[k], k + 1);
 								//S[k + 1].Print();
 							} else if(item.NextWord is Nonterminal) {
-								// Г°Г Г§Г°Г Г±ГІГ Г­ГЁГҐ Г¤ГҐГ°ГҐГўГ  ГЄГ®ГЈГ¤Г  ГІГ®Г·ГЄГ  Г­Г  ГЄГ®Г­ГҐГ·Г­Г®Г© ГЇГ®Г§ГЁГ¶ГЁГЁ
+								// разрастание дерева когда точка на конечной позиции
 								//if (k == 0)
 								//	Predictor(S[0], S[0]);
 								Predictor(item, k, k);
 								//S[k].Print();
 							}
 						} else {
-							// Г±Г®ГЇГ®Г±ГІГ ГўГ«ГҐГ­ГЁГҐ Г­ГҐГІГҐГ°Г¬ГЁГ­Г Г«Г 
+							// сопоставление нетерминала
 							Completer(item, k);
 
 						}
@@ -86,27 +86,28 @@ namespace goLexerAnalyzer
 				
 			}
 			if(matches) {
-				Reduct(itemNumber);
+				return Reduct(itemNumber);
 			} else {
 				Console.Out.WriteLine("\nResult: Chain doesn't match grammar.");
+				return null;
 			}
 
         }
 
-        private void Reduct(int itemNumber)
-        {
-			// ГІГ®Г·ГЄГ  ГўГµГ®Г¤Г  Г°ГҐГЄГіГ°Г±ГЁГўГ­Г®ГЈГ® Г Г«ГЈГ®Г°ГЁГІГ¬Г  Г°Г Г§ГЎГ®Г°Г 
+		private string Reduct(int itemNumber)
+		{
+			// точка входа рекурсивного алгоритма разбора
 			int j = S.Length - 1;
 			Finder(S[j][itemNumber], j);
-			Console.WriteLine(reduct);
-
+			//Console.WriteLine(reduct);
+			return reduct;
 		}
 
 		private void Finder(Item item, int stateNumber)
         {
 			int i = item.Table;
 			int j = stateNumber;
-			reduct = item.Production.Number.ToString() + " " + reduct; // Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГҐ ГЇГ°Г ГўГЁГ«Г  ГЄ Г°Г Г§ГЎГ®Г°Гі
+			reduct = item.Production.Number.ToString() + " " + reduct; // добавление правила к разбору
 
 			Sentence currSentence = item.Production.RightSide;
 			int k = currSentence.Count;
