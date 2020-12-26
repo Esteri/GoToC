@@ -167,14 +167,14 @@ namespace goLexerAnalyzer
                     Nonterminal.Of(TokenType.Operand4lvl),
                 }, 11),
 
-            new Production(
+            /*new Production(
                 Nonterminal.Of(TokenType.Operand3lvl),
                 new Sentence
                 {
                     Nonterminal.Of(TokenType.Operand4lvl),
                     Terminal.Of(TokenType.Comparison),
                     Nonterminal.Of(TokenType.Operand4lvl) //  DONE операнд 3ур> -->  <операнд 4ур> <знак операции сравнения> <операнд 4ур>
-                }, 12),
+                }, 12),*/
 
             new Production(
                 Nonterminal.Of(TokenType.Operand4lvl),

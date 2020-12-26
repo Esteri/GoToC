@@ -65,7 +65,6 @@ namespace goLexerAnalyzer
                 case 45:
                 case 48:
                 case 49:
-                case 51:
                 case 53:
                 case 57:
                     {
@@ -91,6 +90,7 @@ namespace goLexerAnalyzer
                 case 39:
                 case 44:
                 case 47:
+                case 51:
                 case 55:
                 case 56:
                 case 58:

@@ -87,7 +87,7 @@ namespace goLexerAnalyzer
                         return GetSrc();
                     }
                 case 7:
-                case 12:
+                //case 12:
                     {
                         // done
                         rulePos++;
@@ -459,7 +459,9 @@ namespace goLexerAnalyzer
                         string ntOp1 = GetSrc();
                         tokenPos += 2; // skip '{ <EndOfStatement>'
                         rulePos++;
+                        Console.Out.WriteLine("HI1");
                         string ntStatements = GetSrc();
+                        Console.Out.WriteLine("HI2");
                         tokenPos += 2; // skip '} <EndOfStatement>'
                         return string.Format("while ({0}) {{\n{1}}}\n", ntOp1, ntStatements);
                     }

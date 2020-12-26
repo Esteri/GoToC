@@ -60,7 +60,7 @@ namespace goLexerAnalyzer
                     if (!s.Equals(""))
                     {
                         rules.Add(Int32.Parse(s));
-                        Console.Out.WriteLine(s);
+                        //Console.Out.WriteLine(s);
                     }
                 }
             }
@@ -72,7 +72,10 @@ namespace goLexerAnalyzer
 
             Transform t = new Transform();
             List<int> normalized_rules = t.transform(rules);
-
+            
+            foreach (int e in normalized_rules) {
+                Console.Out.WriteLine(e);
+            }
             
             Generator gen = new Generator();
             string cppSrc = gen.GenCppSource(tokens, normalized_rules);
