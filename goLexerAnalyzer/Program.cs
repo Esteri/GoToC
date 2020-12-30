@@ -23,19 +23,14 @@ namespace goLexerAnalyzer
             //Lexer lex = new Lexer(args[0]);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             List<Token> tokens = lex.Parse(args[0]);
-            if (tokens == null)
+            
+            foreach (Token tkn in tokens)
             {
-                return;
-            }
-            int i = 0;
-            foreach ( Token tkn in tokens)
-            {
-                Console.WriteLine(i++ + "\t" + tkn.ToString());
+                Console.WriteLine(tkn.ToString());
             }
 
-            
             Grammar g = new Grammar();
-            g.Print();
+            //g.Print();
             /*Console.Out.WriteLine("Rules for <Declarations>");
             List<Production> rules = g.GetRulesForNt(Nonterminal.Of(TokenType.Declarations));
             foreach (Production rule in rules) {
@@ -48,36 +43,38 @@ namespace goLexerAnalyzer
             foreach(Production rule in rules) {
                 Console.Out.WriteLine(rule.ToString());
             }*/
-
+            
             EarleyParser synt = new EarleyParser(g);
-            string sRules = synt.Parse(tokens);
+            string rules = synt.Parse(tokens);
+            Console.WriteLine(rules);
 
-            // Cеманитческий анализатор
+     // Cеманитческий анализатор
             List<int> rulesForSemer = new List<int>();
-            foreach (string rule in sRules.Split())
+            foreach (string rule in rules.Split())
             {
-                if (rule != "")
+                if (rule!="")
                     rulesForSemer.Add(Convert.ToInt32(rule));
             }
             rulesForSemer.Reverse();
             SemAnalizer semer = new SemAnalizer(tokens, rulesForSemer);
             semer.getCountOfCurlyBrackets();
+
+            Console.WriteLine("----------------Semer----------------");
             semer.getCountOfCurlyBrackets();
             semer.getFuncCalls();
             semer.adChecks();
             //semer.GetFinalTokens();
             semer.chekTypes();
 
-
-            List<int> rules = new List<int>();
+            List<int> sRules = new List<int>();
             if (sRules != null)
             {
-                string[] subsRules = sRules.Split(' ');
+                string[] subsRules = rules.Split(' ');
                 foreach (string s in subsRules)
                 {
                     if (!s.Equals(""))
                     {
-                        rules.Add(Int32.Parse(s));
+                        sRules.Add(Int32.Parse(s));
                         //Console.Out.WriteLine(s);
                     }
                 }
@@ -89,19 +86,22 @@ namespace goLexerAnalyzer
             }
 
             Transform t = new Transform();
-            List<int> normalized_rules = t.transform(rules);
-            
-            foreach (int e in normalized_rules) {
+            List<int> normalized_rules = t.transform(sRules);
+
+            foreach (int e in normalized_rules)
+            {
                 Console.Out.WriteLine(e);
             }
-            
+
             Generator gen = new Generator();
             string cppSrc = gen.GenCppSource(tokens, normalized_rules);
 
             Console.Out.WriteLine("\n //--------- CPP SRC FOLLOWS ---------------\n");
             Console.Out.WriteLine(cppSrc);
-            
 
+
+            //lex = null;
+            Console.ReadKey();
         }
     }
 }

@@ -38,22 +38,22 @@ namespace goLexerAnalyzer
             {
                 switch (token.Lexem)
                 {
-                    case "for": token.Type = TokenType.IdentifierFor; break;
-                    case "switch": token.Type = TokenType.IdentifierSwitch; break;
-                    case "case": token.Type = TokenType.IdentifierCase; break;
-                    case "default": token.Type = TokenType.IdentifierDefault; break;
-                    case "else": token.Type = TokenType.IdentifierElse; break;
-                    case "if": token.Type = TokenType.IdentifierIf; break;
-                    case "func": token.Type = TokenType.IdentifierFunc; break;
-                    case "return": token.Type = TokenType.IdentifierReturn; break;
-                    case "int": token.Type = TokenType.IdentifierType; break;
-                    case "bool": token.Type = TokenType.IdentifierType; break;
-                    case "string": token.Type = TokenType.IdentifierType; break;
-                    case "float": token.Type = TokenType.IdentifierType; break;
-                    case "var": token.Type = TokenType.IdentifierVar; break;
-                    case "const": token.Type = TokenType.IdentifierConst; break;
-                    case "false": token.Type = TokenType.BoolLiteral; break;
-                    case "true": token.Type = TokenType.BoolLiteral; break;                    
+                    case "for": token.type = TokenType.IdentifierFor; break;
+                    case "switch": token.type = TokenType.IdentifierSwitch; break;
+                    case "case": token.type = TokenType.IdentifierCase; break;
+                    case "default": token.type = TokenType.IdentifierDefault; break;
+                    case "else": token.type = TokenType.IdentifierElse; break;
+                    case "if": token.type = TokenType.IdentifierIf; break;
+                    case "func": token.type = TokenType.IdentifierFunc; break;
+                    case "return": token.type = TokenType.IdentifierReturn; break;
+                    case "int": token.type = TokenType.IdentifierType; break;
+                    case "bool": token.type = TokenType.IdentifierType; break;
+                    case "string": token.type = TokenType.IdentifierType; break;
+                    case "float": token.type = TokenType.IdentifierType; break;
+                    case "var": token.type = TokenType.IdentifierVar; break;
+                    case "const": token.type = TokenType.IdentifierConst; break;
+                    case "false": token.type = TokenType.BoolLiteral; break;
+                    case "true": token.type = TokenType.BoolLiteral; break;                    
                 }
             }
             foreach(Token token in tokens)
