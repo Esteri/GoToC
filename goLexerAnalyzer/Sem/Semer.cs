@@ -6,11 +6,32 @@ using System.Threading.Tasks;
 
 namespace goLexerAnalyzer
 {
+    public class Funcs
+    {
+        public List<string> names = new List<string>();
+        public List<string> types = new List<string>();
+    }
+
+    public class IDs
+    {
+        public List<string> names = new List<string>();
+        public List<string> types = new List<string>();
+    }
+
+    public class FuncIDs
+    {
+        public List<string> names = new List<string>();
+        public List<string> types = new List<string>();
+    }
+
     public class SemAnalizer
     {
         public List<Token> tokens;
         public List<int> rulesList;
         public ParseTree ParsTr;
+        public IDs ids = new IDs();
+        public Funcs funcs = new Funcs();
+        public FuncIDs funcIDs = new FuncIDs();
         public SemAnalizer(List<Token> tokens, List<int> rulesForSemer) 
         {
             foreach(Token token in tokens)
@@ -42,6 +63,57 @@ namespace goLexerAnalyzer
             this.tokens = tokens;
             this.rulesList = rulesForSemer;
             this.ParsTr = new ParseTree(rulesForSemer);
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                if (tokens[i].Lexem == "var" || tokens[i].Lexem == "const")
+                {
+                    if (ids.names != null)
+                    {
+                        if (!ids.names.Contains(tokens[i + 1].Lexem))
+                        {
+                            ids.names.Add(tokens[i + 1].Lexem);
+                            ids.types.Add(tokens[i + 2].Lexem);
+                        }
+                    }
+                    else
+                    {
+                        ids.names.Add(tokens[i + 1].Lexem);
+                        ids.types.Add(tokens[i + 2].Lexem);
+                    }
+                }
+                if (tokens[i].Lexem == "func" && tokens[i+1].Lexem != "main")
+                {
+                    funcs.names.Add(tokens[i + 1].Lexem);
+                    int k = 1;
+                    while (tokens[i + k].Type != TokenType.ClosingRoundBracket)
+                    {
+                        k++;
+                    }
+                    if (tokens[i + k].Lexem == "bool" || tokens[i + k].Lexem == "int" || tokens[i + k].Lexem == "float" || tokens[i + k].Lexem == "string")
+                    {
+                        funcs.names.Add(tokens[i + k].Lexem);
+                    }
+                    if (tokens[i + k].Type == TokenType.OpenningCurlyBracket)
+                    {
+                        funcs.types.Add("void");
+                    }
+                }
+                {
+                    if (tokens[i].Lexem == "func")
+                    {
+                        int k = 2;
+                        while (tokens[i + k].Type != TokenType.ClosingRoundBracket)
+                        {
+                            if (tokens[i + k].Type == TokenType.Identifier)
+                            {
+                                funcIDs.names.Add(tokens[i + k].Lexem);
+                                funcIDs.types.Add(tokens[i + k + 1].Lexem);
+                            }
+                            k++;
+                        }
+                    }
+                }
+            }
         }
 
         public void getCountOfCurlyBrackets()
@@ -63,7 +135,6 @@ namespace goLexerAnalyzer
                     return;
                 }
             }
-            Console.Out.WriteLine("Bloks<256:" + true);
         }
 
         public void getFuncCalls()
@@ -85,7 +156,6 @@ namespace goLexerAnalyzer
                     return;
                 }
             }
-            Console.Out.WriteLine("Calls<256:" + true);
         }
 
         public void adChecks()
@@ -196,7 +266,7 @@ namespace goLexerAnalyzer
                 }
             }*/
 
-            //Проверка на двойное объявление константы:
+            //Проверка на переприсваивание значения константе:
             List<string> consts = new List<string>();
             for (int i = 0; i < tokens.Count; i++)
             {
@@ -204,8 +274,21 @@ namespace goLexerAnalyzer
                 {
                     if (!consts.Contains(tokens[i + 1].Lexem))
                         consts.Add(tokens[i + 1].Lexem);
-                    else
-                        Console.Out.WriteLine("const " + tokens[i+1] + " announced twice");
+                }
+            }
+            foreach(string c in consts)
+            {
+                int counter = 0;
+                for(int i = 0; i<tokens.Count; i++)
+                {
+                    if(c == tokens[i].Lexem && tokens[i+1].Lexem == "=")
+                    {
+                        counter++;
+                    }
+                    if (counter > 1)
+                    {
+                        Console.Out.WriteLine("const " + c + " assigned a value twice");
+                    }
                 }
             }
         }
@@ -223,6 +306,130 @@ namespace goLexerAnalyzer
         public void chekTypes()
         {
             Console.Out.WriteLine("Types are correct");
+        }
+
+        public void getExpr()
+        {
+            List<List<Token>> expressions = new List<List<Token>>();
+            List<List<Token>> memory = new List<List<Token>>();
+            List<Token> expression = new List<Token>();
+
+            for(int i = 0; i<tokens.Count; i++)
+            {
+                if (funcs.names.Contains(tokens[i].Lexem))
+                {
+                    int k = 0;
+                    while (tokens[i + k].Type != TokenType.ClosingRoundBracket)
+                    {
+                        expression.Add(tokens[i + k]);
+                        k++;
+                    }
+                    i = i + k;
+                }
+                if (tokens[i].Type == TokenType.Addition || tokens[i].Type == TokenType.Multiplication || tokens[i].Type == TokenType.Comparison)                     
+                {
+                    expression.Add(tokens[i]);
+                }
+                if (ids.names.Contains(tokens[i].Lexem))
+                {
+                    expression.Add(tokens[i]);
+                }
+                if (funcIDs.names.Contains(tokens[i].Lexem))
+                {
+                    expression.Add(tokens[i]);
+                }
+                if (tokens[i].Type == TokenType.OpenningRoundBracket|| tokens[i].Type == TokenType.ClosingRoundBracket)
+                {
+                    expression.Add(tokens[i]);
+                }
+                if (tokens[i].Type == TokenType.BoolLiteral || tokens[i].Type == TokenType.IntLiteral || tokens[i].Type == TokenType.StringLiteral || tokens[i].Type == TokenType.FloatLiteral)
+                {
+                    expression.Add(tokens[i]);
+                }
+                if ((tokens[i].Type!= TokenType.Addition) && (tokens[i].Type != TokenType.Multiplication) && (tokens[i].Type !=  TokenType.Comparison) && (tokens[i].Type != TokenType.ClosingRoundBracket) && (tokens[i].Type != TokenType.OpenningRoundBracket) && (!funcs.names.Contains(tokens[i].Lexem)) && (!funcIDs.names.Contains(tokens[i].Lexem)) && (!ids.names.Contains(tokens[i].Lexem)) && (tokens[i].Type != TokenType.BoolLiteral) && (tokens[i].Type != TokenType.IntLiteral) && (tokens[i].Type != TokenType.StringLiteral) && (tokens[i].Type != TokenType.FloatLiteral))
+                {
+                    bool flag = false;
+                    if (expression.Count == 1) expression.Clear();
+                    else
+                    {                        
+                        for (int j = 0; j<expression.Count; j++)
+                        {
+                            if (expression[j].Type == TokenType.Addition || expression[j].Type == TokenType.Multiplication || expression[j].Type == TokenType.Comparison)
+                                flag = true;   
+                        }
+                        if(flag)
+                        {
+                            expressions.Add(expression.GetRange(0, expression.Count));
+                            memory.Add(expression.GetRange(0, expression.Count));
+                            expression.Clear();
+                        }
+                        else
+                        {
+                            expression.Clear();
+                        }
+                    }
+                }
+            }
+
+            //свёртка выражений
+
+            /*foreach (List<Token> expr in expressions)
+            {
+                int i = 0;
+                while (expr[i].Type != TokenType.ClosingRoundBracket)
+                    i++;
+                while (expr[i].Type != TokenType.OpenningRoundBracket)
+                {
+                    if(expr[i].Type == TokenType.Identifier)
+                    {
+                        if (funcs.names.Contains(expr[i].Lexem)){
+                            int j = funcs.names.IndexOf(expr[i].Lexem);
+                            if (funcs.types[j] == "int")
+                                expr[i] = new Token(TokenType.IntLiteral, "");
+                            if (funcs.types[j] == "float")
+                                expr[i] = new Token(TokenType.FloatLiteral, "");
+                            if (funcs.types[j] == "bool")
+                                expr[i] = new Token(TokenType.BoolLiteral, "");
+                            if (funcs.types[j] == "string")
+                                expr[i] = new Token(TokenType.StringLiteral, "");
+                        }
+
+                        if (ids.names.Contains(expr[i].Lexem))
+                        {
+                            int j = ids.names.IndexOf(expr[i].Lexem);
+                            if (ids.types[j] == "int")
+                                expr[i] = new Token(TokenType.IntLiteral, "");
+                            if (ids.types[j] == "float")
+                                expr[i] = new Token(TokenType.FloatLiteral, "");
+                            if (ids.types[j] == "bool")
+                                expr[i] = new Token(TokenType.BoolLiteral, "");
+                            if (ids.types[j] == "string")
+                                expr[i] = new Token(TokenType.StringLiteral, "");
+                        }
+
+                        if (funcIDs.names.Contains(expr[i].Lexem))
+                        {
+                            int j = ids.names.IndexOf(expr[i].Lexem);
+                            if (funcIDs.types[j] == "int")
+                                expr[i] = new Token(TokenType.IntLiteral, "");
+                            if (funcIDs.types[j] == "float")
+                                expr[i] = new Token(TokenType.FloatLiteral, "");
+                            if (funcIDs.types[j] == "bool")
+                                expr[i] = new Token(TokenType.BoolLiteral, "");
+                            if (funcIDs.types[j] == "string")
+                                expr[i] = new Token(TokenType.StringLiteral, "");
+                        }
+
+                        if(tokens[i+1].Type == TokenType.OpenningRoundBracket)
+                        {
+                            while (tokens[i + 1].Type != TokenType.ClosingRoundBracket)
+                                tokens.RemoveAt(i + 1);
+                            tokens.RemoveAt(i + 1);
+                        }
+                    }
+                    i--;
+                }
+            }*/
         }
     }
 }

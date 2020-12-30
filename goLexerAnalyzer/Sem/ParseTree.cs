@@ -115,8 +115,10 @@ namespace goLexerAnalyzer
 
                         }
                     }
+
                 }
             }
+
             Console.Out.WriteLine();
             for (int i = 0; i<expressionList.Count; i++)
             {
