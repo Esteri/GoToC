@@ -8,8 +8,8 @@ namespace goLexerAnalyzer
 {
     public class Token
     {
-        private TokenType type;
-        private string lexem;
+        public TokenType type;
+        public string lexem;
 
         public Token(TokenType tt, string lex)
         {
