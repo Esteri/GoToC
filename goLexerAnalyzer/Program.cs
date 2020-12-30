@@ -51,6 +51,24 @@ namespace goLexerAnalyzer
 
             EarleyParser synt = new EarleyParser(g);
             string sRules = synt.Parse(tokens);
+
+            // Cеманитческий анализатор
+            List<int> rulesForSemer = new List<int>();
+            foreach (string rule in sRules.Split())
+            {
+                if (rule != "")
+                    rulesForSemer.Add(Convert.ToInt32(rule));
+            }
+            rulesForSemer.Reverse();
+            SemAnalizer semer = new SemAnalizer(tokens, rulesForSemer);
+            semer.getCountOfCurlyBrackets();
+            semer.getCountOfCurlyBrackets();
+            semer.getFuncCalls();
+            semer.adChecks();
+            //semer.GetFinalTokens();
+            semer.chekTypes();
+
+
             List<int> rules = new List<int>();
             if (sRules != null)
             {
